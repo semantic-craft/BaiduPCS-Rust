@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -uo pipefail
+cd "$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)"
+# AGENTS.md entry points: backend cargo test, frontend vitest and build. Dependencies must already be installed;
+# real transfer, download and install acceptance stay separate. Both halves run so every failure is listed.
+status=0
+(cd backend && cargo test) || { echo "FAIL: backend cargo test"; status=1; }
+(cd frontend && npm test && npm run build) || { echo "FAIL: frontend npm test / build"; status=1; }
+exit $status
